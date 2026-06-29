@@ -1,0 +1,3 @@
+# This is a sample person folder
+# Add clear photos of this person for face recognition
+# Rename this folder to the actual person's name

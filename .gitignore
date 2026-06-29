@@ -1,0 +1,22 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Large Model Weights (YOLO)
+*.pt
+
+# Cache and temporary speech files
+known_faces/encodings.pkl
+temp_speech_*
+test_say.aiff
+
+# macOS System Files
+.DS_Store
