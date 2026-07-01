@@ -17,6 +17,8 @@ __pycache__/
 known_faces/encodings.pkl
 temp_speech_*
 test_say.aiff
+streamlit.*.log
+.streamlit/secrets.toml
 
 # macOS System Files
 .DS_Store

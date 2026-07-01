@@ -51,7 +51,7 @@ def main():
         st.session_state.gesture_enabled = True
         st.session_state.yolo_imgsz = 960
         st.session_state.camera_source = "Local Webcam"
-        st.session_state.rpi_stream_url = "http://192.168.1.100:8000/stream.mjpg"
+        st.session_state.rpi_stream_url = "http://192.168.1.100:5000/video_feed"
         st.session_state.audio_device = "System Default"
     
     # Sidebar controls
@@ -278,7 +278,7 @@ def main():
                 'yolov8m.pt': 'YOLOv8 Medium (High Accuracy)',
                 'yolov8l.pt': 'YOLOv8 Large (Maximum Accuracy)'
             }[x],
-            index=2,
+            index=0,
             help="Larger models have significantly higher accuracy but require more processing."
         )
         
@@ -316,7 +316,7 @@ def main():
         )
         st.session_state.camera_source = camera_source
         
-        rpi_url = st.session_state.get('rpi_stream_url', 'http://192.168.1.100:8000/stream.mjpg')
+        rpi_url = st.session_state.get('rpi_stream_url', 'http://192.168.1.100:5000/video_feed')
         if camera_source == "Raspberry Pi (WiFi Stream)":
             rpi_url = st.text_input(
                 "Raspberry Pi Stream URL",
@@ -324,6 +324,9 @@ def main():
                 help="Enter the URL of your Raspberry Pi MJPEG or RTSP video stream"
             )
             st.session_state.rpi_stream_url = rpi_url
+            st.caption("Example: http://192.168.1.100:5000/video_feed. Use the Raspberry Pi IP address, not localhost.")
+            if "localhost" in rpi_url.lower() or "127.0.0.1" in rpi_url:
+                st.warning("localhost points to this laptop. For a Raspberry Pi camera, use the Pi's LAN IP address.")
 
         # Camera controls
         st.header("📹 Camera Controls")
@@ -375,8 +378,8 @@ def main():
                 # Initialize object detector  
                 object_detector = ObjectDetector(model_path=yolo_model_choice, confidence_threshold=confidence_threshold, imgsz=st.session_state.yolo_imgsz)
                 
-                # Initialize OCR detector
-                ocr_detector = OcrDetector()
+                # Initialize OCR only when requested; EasyOCR downloads/models are heavy.
+                ocr_detector = OcrDetector() if enable_ocr else None
                 
                 # Initialize video processor
                 video_processor = StreamlitVideoProcessor()
@@ -457,6 +460,10 @@ def run_video_stream(video_placeholder, status_placeholder, face_stats, object_s
                     enable_voice, voice_language, confidence_threshold,
                     enable_expression=True, enable_gesture=True):
     """Run the video stream with continuous updates."""
+    
+    if enable_ocr and st.session_state.ocr_detector is None:
+        with st.spinner("Loading OCR models..."):
+            st.session_state.ocr_detector = OcrDetector()
     
     # Set camera source dynamically before opening stream
     if st.session_state.get('camera_source', 'Local Webcam') == "Raspberry Pi (WiFi Stream)":

@@ -1,134 +1,233 @@
-# Face & Object Detection System with Voice Announcements
+# Akshu Computer Vision Streamlit App
 
-A real-time AI-powered face, object, gesture, expression, and OCR text detection system featuring intelligent voice announcements. Optimized for accessibility, security monitoring, and interactive demonstrations. Built with Streamlit, OpenCV, YOLOv8, and custom voice routing.
+Akshu is a Streamlit dashboard for live face detection, OpenCV LBPH face
+recognition, YOLOv8 object detection, optional EasyOCR text reading, gesture and
+expression detection, and voice announcements.
 
----
+This guide is written for the current laptop environment detected here:
+Windows with PowerShell. The existing `.venv` in this folder points to a removed
+Python 3.8 install, so recreate it before running the app.
 
-## 🆕 ADVANCED FEATURES
+## 1. Clone The Repository
 
-### 🔊 Bluetooth Audio Selection & Routing
-- **Earbuds & Headphones Ready**: Direct audio routing to your selected Bluetooth earbuds (e.g., AirPods, Bluetooth headphones) or system speakers.
-- **Dynamic Device List**: Sidebar selector lists all connected output devices dynamically.
-- **Smart Cooldown & De-cluttering**: Prevents announcement spam using configurable cooldown periods.
-- **Bilingual Announcements**: High-quality spoken alerts in both English and Bengali.
+This workspace is already cloned at `D:\AKSHU`. If you are starting on a fresh
+machine, run:
 
-### 📶 Raspberry Pi Camera Stream (Wi-Fi)
-- **Wireless Input**: Toggle between your local webcam or a remote Raspberry Pi camera stream over Wi-Fi.
-- **Flexible Formats**: Supports standard MJPEG streams (e.g., from `mjpg-streamer` or Flask servers) and RTSP streams.
-- **Robust Connection Handling**: Dynamic connection checks and clear UI status warnings.
+```powershell
+git clone https://github.com/ghoshpronabesh/akshu.git
+cd akshu
+```
 
-### 🔌 High-Quality Offline Voice Fallback (macOS `say`)
-- **DNS & Offline Resilient**: If the cloud/Edge TTS voice engine fails due to offline environments (DNS/SSL lookup errors), the system seamlessly transitions to macOS's native `say` command.
-- **Thread-safe Output**: Audio generated offline is rendered to temporary AIFF files and streamed through `sounddevice`, preserving your selected Bluetooth output routing.
-- **Bilingual Offline Voices**: Uses macOS's native `Piya` voice for Bengali and `Daniel` for English, with a generic system default voice recovery.
+If you are using this existing folder:
 
----
+```powershell
+cd /d D:\AKSHU
+```
 
-## Features
+## 2. Install Python
 
-- **Live Video Feed**: High-resolution processing with dynamic FPS display overlays.
-- **Face Detection & Recognition**: OpenCV Haar Cascades for detection, combined with an LBPH recognizer to identify registered individuals from `known_faces/`.
-- **YOLOv8 Object Detection**: High-performance multi-class detection (up to 80 COCO classes) with GPU/MPS hardware acceleration.
-- **Hand Gesture Recognition**: MediaPipe Hands classifies sign language gestures (Thumbs Up/Down, Peace, OK, Open Palm, Fist, etc.).
-- **Facial Expression Detection**: MediaPipe Face Mesh classifies expressions (Happy, Sad, Angry, Surprised, Neutral).
-- **OCR Text Reading**: Frame-skipped EasyOCR parses printed English and Bengali text on the fly.
+Install 64-bit [Python 3.11.9](https://www.python.org/downloads/release/python-3119/)
+for Windows from python.org. It is a stable target for this ML/CV dependency
+stack and has an official Windows installer. During installer setup, enable
+"Add python.exe to PATH".
 
----
+Check that Windows can see Python:
 
-## Installation
+```powershell
+py -0p
+py -3.11 --version
+```
 
-1. Install Python 3.8 or higher.
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+Python 3.10 can also work. If you install Python 3.10 instead, replace
+`py -3.11` with `py -3.10` in the commands below.
 
----
+## 3. Recreate And Activate The Virtual Environment
 
-## Usage
+The previous environment is broken, so remove it and create a fresh one:
 
-### 1. Set Up Known Faces (Optional)
-Create folders in the `known_faces/` directory using names (use underscores instead of spaces):
+```powershell
+if (Test-Path .venv) { Remove-Item -Recurse -Force .venv }
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+If PowerShell blocks activation:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+.\.venv\Scripts\Activate.ps1
+```
+
+Upgrade packaging tools:
+
+```powershell
+python -m pip install --upgrade pip setuptools wheel
+```
+
+## 4. Install Dependencies
+
+```powershell
+pip install -r requirements.txt
+```
+
+Quick verification:
+
+```powershell
+python -c "import streamlit, cv2; print('streamlit ok'); print('cv2', cv2.__version__, 'face module:', hasattr(cv2, 'face'))"
+python -m pip check
+```
+
+The app uses OpenCV's `cv2.face.LBPHFaceRecognizer_create()`, so
+`opencv-contrib-python` is required. The current code does not import
+`dlib` or `face_recognition`, so those packages are intentionally not in
+`requirements.txt`.
+
+## 5. Run The Dashboard On Your LAN
+
+For Raspberry Pi camera use, do not rely on Streamlit's localhost-only URL.
+Run the included LAN launcher:
+
+```powershell
+.\scripts\run_lan.ps1
+```
+
+It starts Streamlit with:
+
+```powershell
+python -m streamlit run app.py --server.address 0.0.0.0 --server.port 8501
+```
+
+Open on the laptop:
+
+```text
+http://localhost:8501
+```
+
+Open from another device on the same Wi-Fi using the laptop IP printed by the
+script:
+
+```text
+http://<LAPTOP_IP>:8501
+```
+
+If Windows Firewall prompts you, allow Python/Streamlit on private networks.
+
+## 6. Stream A Raspberry Pi Camera To The Laptop
+
+The dashboard runs on the laptop. The camera runs on the Raspberry Pi and sends
+MJPEG video over Wi-Fi.
+
+On the Raspberry Pi:
+
 ```bash
-known_faces/
-├── john_doe/
-│   ├── image1.jpg
-│   └── image2.jpg
-└── jane_smith/
-    ├── image1.jpg
-    └── image2.jpg
+git clone https://github.com/ghoshpronabesh/akshu.git
+cd akshu
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements-pi.txt
+python scripts/pi_camera_stream.py --host 0.0.0.0 --port 5000 --source 0
 ```
-The system will automatically generate face encodings on startup.
 
-### 2. Run the Application
-Launch the Streamlit dashboard:
+For the Raspberry Pi Camera Module instead of a USB camera:
+
 ```bash
-streamlit run app.py
+sudo apt update
+sudo apt install -y python3-picamera2
+python scripts/pi_camera_stream.py --host 0.0.0.0 --port 5000 --picamera2
 ```
 
-### 3. Using the Sidebar Controls
+The Pi script prints a URL like:
 
-#### 📹 Camera Source Settings
-1. **Camera Input Source**:
-   - Select **Local Webcam** for your integrated camera.
-   - Select **Raspberry Pi (WiFi Stream)** to stream from a remote Pi.
-2. **Raspberry Pi Stream URL**: Input the MJPEG stream path (e.g., `http://192.168.1.100:8000/stream.mjpg`) or RTSP URL.
-
-#### 🚀 System Initialization
-- Click **Initialize System** to compile weights, build face encodings, and set up detectors. 
-
-#### 🔊 Voice Announcements
-1. **Enable Voice Mode**: Route speech announcements to your preferred output.
-2. **Audio Output Device**: Route announcements directly to your connected earbuds/headphones or leave on "System Default".
-3. **Voice Language**: Toggle between English and Bengali.
-
----
-
-## Setting up Raspberry Pi Camera Stream
-To stream from your Raspberry Pi to the app over Wi-Fi:
-
-### Option A: Using MJPEG-Streamer (Recommended)
-1. Run `mjpg-streamer` on the Raspberry Pi:
-   ```bash
-   mjpeg_streamer -i "input_uvc.so -d /dev/video0 -r 1280x720 -f 30" -o "output_http.so -w ./www -p 8000"
-   ```
-2. Enter the URL in the app: `http://<YOUR_PI_IP>:8000/?action=stream`
-
-### Option B: Using a Flask/Python Streamer
-Run a script on the Raspberry Pi that reads frames from the camera using OpenCV and streams them over a Flask route, then target `http://<YOUR_PI_IP>:5000/video_feed`.
-
----
-
-## Technical File Structure
-
-```
-akshu/
-├── app.py                      # Main Streamlit dashboard app
-├── detection/
-│   ├── face_detector.py        # Cascaded face detection and recognition handler
-│   ├── face_recognizer.py      # Core LBPH training and matching engine
-│   ├── object_detector.py      # Accelerated YOLOv8 object detector
-│   ├── ocr_detector.py         # EasyOCR text scanner (bilingual)
-│   ├── expression_detector.py  # MediaPipe facial expressions classifier
-│   └── gesture_detector.py     # MediaPipe hand gesture/sign language parser
-├── utils/
-│   ├── camera.py              # Frame capture and stream interface
-│   └── voice_announcer.py     # Multilingual TTS and audio device routing
-├── known_faces/               # Reference images for face recognition
-├── requirements.txt           # Package dependencies
-└── README.md                 # Project documentation
+```text
+http://192.168.1.100:5000/video_feed
 ```
 
----
+On the laptop dashboard:
+
+1. Click `Initialize System`.
+2. In the sidebar, set `Camera Input Source` to `Raspberry Pi (WiFi Stream)`.
+3. Paste `http://<RASPBERRY_PI_IP>:5000/video_feed`.
+4. Click `Start`.
+
+Important: `localhost` on the laptop means the laptop, not the Raspberry Pi.
+Use the Pi IP address.
+
+## Alternative Pi Stream URLs
+
+The app also accepts common OpenCV-readable streams:
+
+```text
+http://<RASPBERRY_PI_IP>:5000/video_feed
+http://<RASPBERRY_PI_IP>:5000/stream.mjpg
+http://<RASPBERRY_PI_IP>:8000/?action=stream
+rtsp://<RASPBERRY_PI_IP>:8554/stream
+```
+
+If you already use `mjpg-streamer` on the Pi, run it on the Pi and paste its
+`?action=stream` URL into the dashboard.
 
 ## Troubleshooting
 
-### Voice Announcements not Playing
-- Ensure the correct **Audio Output Device** is chosen in the sidebar.
-- Check that your headphones/earbuds are paired and connected to your Mac system bluetooth.
-- Look at the console logs for edge-tts connection or sounddevice warnings.
+### Python Or Virtual Environment Problems
 
-### Slow Frame Rates
-- Decrease the **YOLO Inference Resolution** in the settings.
-- Lower the camera stream resolution.
-- Turn off unused detectors (e.g. hand gestures or OCR).
+- `python` or `py` is not recognized: install 64-bit Python 3.11.9 and enable
+  PATH.
+- `.venv` points to old Python 3.8: delete `.venv` and recreate it.
+- Activation is blocked: run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+
+### Dependency Install Problems
+
+- `cv2.face` is missing: reinstall OpenCV contrib:
+
+  ```powershell
+  pip uninstall -y opencv-python opencv-python-headless opencv-contrib-python opencv-contrib-python-headless
+  pip install opencv-contrib-python
+  ```
+
+- `dlib` or `face-recognition` fails with C++ build errors: the current app does
+  not need them. Remove those packages unless you are testing an older branch.
+  If an old branch truly needs them, install "Visual Studio Build Tools" with
+  the C++ workload, then retry.
+- `torch`, `mediapipe`, or `easyocr` has no matching wheel: use 64-bit Python
+  3.10 or 3.11, then upgrade pip and reinstall.
+- YOLO model download fails on first run: check internet access or manually
+  place the required `yolov8*.pt` file in the project folder.
+
+### Raspberry Pi Stream Problems
+
+- Dashboard cannot connect to Pi stream: confirm laptop and Pi are on the same
+  network, use the Pi IP address, and allow port `5000` through the Pi firewall.
+- Browser test first from the laptop:
+
+  ```text
+  http://<RASPBERRY_PI_IP>:5000/video_feed
+  ```
+
+- USB camera not opening on Pi: try `--source 1`, close other camera apps, and
+  check `ls /dev/video*`.
+- Pi Camera Module not opening: run `libcamera-hello` on the Pi and install
+  `python3-picamera2`.
+
+### Audio Problems
+
+- No voice output: choose a valid output device in the sidebar and make sure
+  Bluetooth headphones are connected before starting voice mode.
+- `sounddevice` cannot find a device: reinstall `sounddevice` and `soundfile`,
+  then restart the terminal.
+- Cloud neural voice fails offline: the app falls back to local `pyttsx3` where
+  available.
+
+## File Map
+
+```text
+app.py                         Streamlit dashboard
+detection/                     Face, object, OCR, expression, gesture detection
+utils/camera.py                Camera capture and frame processing
+utils/voice_announcer.py       Voice announcements and AI response routing
+scripts/run_lan.ps1            Windows LAN Streamlit launcher
+scripts/pi_camera_stream.py    Raspberry Pi MJPEG camera streamer
+requirements.txt               Laptop/dashboard dependencies
+requirements-pi.txt            Raspberry Pi camera-stream dependencies
+known_faces/                   Optional registered face images
+```

@@ -1,0 +1,7 @@
+# Install this on the Raspberry Pi only if you use scripts/pi_camera_stream.py.
+flask>=3.0.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# For the Raspberry Pi Camera Module, install Picamera2 with apt:
+# sudo apt install -y python3-picamera2

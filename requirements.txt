@@ -1,14 +1,24 @@
+# Core dashboard
 streamlit>=1.28.0
-opencv-python>=4.8.0
-ultralytics>=8.0.0
 numpy>=1.24.0
 pillow>=10.0.0
+requests>=2.31.0
+
+# Computer vision and ML
+# Keep EasyOCR before OpenCV contrib so the contrib wheel owns cv2.face.
+easyocr>=1.7.0
+opencv-contrib-python>=4.8.0
+ultralytics>=8.0.0
 torch>=2.0.0
 torchvision>=0.15.0
-face-recognition>=1.3.0
-dlib>=19.24.0
+mediapipe>=0.10.0
+
+# Voice and audio routing
 pyttsx3>=2.90
-threading
+sounddevice>=0.4.6
+soundfile>=0.12.1
+edge-tts>=6.1.0
+
+# Optional AI announcement backends used by the sidebar
 ollama>=0.2.1
-mediapipe
-google-genai
+google-genai>=0.8.0
