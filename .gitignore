@@ -30,3 +30,16 @@ data/activity.json
 # Local AKSHU backups
 akshu2_backup.py
 akshu2_before_vision.py
+# AKSHU local test files
+akshu_voice_test.wav
+mic_test.py
+mic_test14.py
+mic_test15.py
+recognition_test.py
+voice_test.py
+
+# AKSHU local backups
+akshu2_stable.py
+core/realtime_vision_backup.py
+realtime_app_backup.py
+realtime_app_before_voice.py
