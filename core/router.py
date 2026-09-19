@@ -5,7 +5,7 @@ class AkshuRouter:
 
     def __init__(self):
         self.name = "AKSHU"
-        self.version = "2.0"
+        self.version = "3.0"
 
     def process(self, command):
 
@@ -34,7 +34,7 @@ class AkshuRouter:
             or "system status" in lower_command
         ):
             return self._response(
-                "AKSHU 2.0 is online. "
+                "AKSHU 3.0 is online. "
                 "Memory system operational. "
                 "Command router operational."
             )
@@ -169,3 +169,4 @@ class AkshuRouter:
             "version": self.version,
             "message": message
         }
+
