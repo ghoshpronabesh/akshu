@@ -22,3 +22,11 @@ streamlit.*.log
 
 # macOS System Files
 .DS_Store
+
+# AKSHU local memory and activity
+data/memory.json
+data/activity.json
+
+# Local AKSHU backups
+akshu2_backup.py
+akshu2_before_vision.py
