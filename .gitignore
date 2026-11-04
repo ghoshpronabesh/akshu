@@ -1,45 +1,21 @@
-# Virtual Environment
-venv/
-.venv/
-env/
-ENV/
-
-# Python Cache
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Large Model Weights (YOLO)
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
 *.pt
+*.onnx
+*.engine
+runs/
+datasets/
+.DS_Store
+Thumbs.db
 
-# Cache and temporary speech files
-known_faces/encodings.pkl
-temp_speech_*
-test_say.aiff
-streamlit.*.log
+# AKSHU private data
+known_faces/
+data/
 .streamlit/secrets.toml
 
-# macOS System Files
-.DS_Store
-
-# AKSHU local memory and activity
-data/memory.json
-data/activity.json
-
-# Local AKSHU backups
-akshu2_backup.py
-akshu2_before_vision.py
-# AKSHU local test files
-akshu_voice_test.wav
-mic_test.py
-mic_test14.py
-mic_test15.py
-recognition_test.py
-voice_test.py
-
-# AKSHU local backups
-akshu2_stable.py
-core/realtime_vision_backup.py
-realtime_app_backup.py
-realtime_app_before_voice.py
+# Local environments

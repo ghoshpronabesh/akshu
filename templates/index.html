@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070c14"><title>AKSHU 5.0 — Smart Vision</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/"><span class="brand-mark">A</span><span><b>AKSHU <em>5.0</em></b><small>SMART VISION / CONTINUOUS GUIDANCE</small></span></a>
+  <div class="top-right"><span class="live-dot"></span><span id="systemState">SYSTEM STANDBY</span><span class="version">CLOUD CONTROL CENTRE</span></div>
+</header>
+<main class="shell">
+  <section class="hero"><div><div class="eyebrow">INTELLIGENT ASSISTANCE PLATFORM <span>•</span> BUILD 5.0</div><h1>Situational awareness,<br><span>made intelligent.</span></h1><p>Local computer vision. Cloud-connected guidance. Voice delivered by your browser.</p></div><div class="hero-orbit"><div class="orbit-ring"></div><div class="orbit-core">A<span>5.0</span></div><i class="orbit-point p1"></i><i class="orbit-point p2"></i><i class="orbit-point p3"></i></div></section>
+  <section class="toolbar panel"><div class="mode-copy"><span class="eyebrow">OPERATING MODE</span><strong id="modeLabel">STANDBY</strong><small id="modeDescription">Choose Demo Mode to explore without a camera.</small></div><div class="toolbar-actions"><button id="demoBtn" class="btn btn-primary">▶ DEMO MODE</button><button id="stopDemoBtn" class="btn btn-quiet" disabled>■ STOP</button><button id="startLiveBtn" class="btn btn-outline">↗ LIVE MODE</button></div></section>
+  <section class="status-grid">
+    <article class="status-card panel"><span class="card-icon">◉</span><span class="eyebrow">VISION / CAMERA</span><strong id="cameraStatus">Standby</strong><small id="cameraSub">No camera required for demo</small></article>
+    <article class="status-card panel"><span class="card-icon">⌗</span><span class="eyebrow">AI / DETECTION</span><strong id="modelStatus">Awaiting input</strong><small id="objectCount">0 objects in current scene</small></article>
+    <article class="status-card panel"><span class="card-icon">◖</span><span class="eyebrow">BROWSER VOICE</span><strong id="voiceStatus">Not enabled</strong><small id="voiceSub">Requires one click to activate</small></article>
+    <article class="status-card panel"><span class="card-icon">⌁</span><span class="eyebrow">LIVE AGENT</span><strong id="agentStatus">Disconnected</strong><small id="agentSub">Windows laptop connection</small></article>
+  </section>
+  <section class="main-grid">
+    <article class="panel vision-panel"><div class="section-head"><div><span class="eyebrow">01 / VISUAL INTELLIGENCE</span><h2>Vision monitor</h2></div><span id="feedBadge" class="badge">NO SIGNAL</span></div>
+      <div class="vision-stage" id="visionStage"><div class="scan-lines"></div><div class="stage-content"><div class="radar"><span></span><i></i><b></b></div><strong id="stageTitle">Awaiting visual input</strong><p id="stageText">Start Demo Mode to view simulated scene detections, or connect your Windows agent for live YOLO results.</p><div id="simTag" class="sim-tag hidden">SIMULATED DATA · NOT A REAL CAMERA</div></div><img id="liveFrame" alt="Live annotated camera frame" class="live-frame hidden"></div>
+      <div class="vision-footer"><span><i class="tiny-dot"></i><span id="feedSource">NO ACTIVE FEED</span></span><span id="fpsValue">— FPS</span></div>
+    </article>
+    <article class="panel detections-panel"><div class="section-head"><div><span class="eyebrow">02 / SCENE ANALYSIS</span><h2>Detected objects</h2></div><span class="count-badge" id="detectionCount">00</span></div><div id="detectionList" class="detection-list"><div class="empty-state">No objects detected yet.</div></div><div class="scene-summary"><span class="eyebrow">CURRENT GUIDANCE</span><p id="currentGuidance">Guidance messages will appear here.</p></div></article>
+  </section>
+  <section class="lower-grid">
+    <article class="panel voice-panel"><div class="section-head"><div><span class="eyebrow">03 / AUDIO INTERFACE</span><h2>Voice control</h2></div><span class="badge" id="speechSupport">CHECKING SUPPORT</span></div><p class="voice-intro">Speech is generated on this device by your browser. Render does not need speakers or a Python text-to-speech engine.</p><div class="voice-actions"><button id="enableVoiceBtn" class="btn btn-primary">♫ ENABLE VOICE</button><button id="testVoiceBtn" class="btn btn-outline">TEST VOICE</button><button id="muteVoiceBtn" class="btn btn-quiet" disabled>Ⅱ MUTE</button></div><div class="voice-state"><span class="pulse" id="speechPulse"></span><span id="speechState">Voice permission has not been enabled.</span></div><div class="voice-error" id="voiceError" role="status" aria-live="polite"></div></article>
+    <article class="panel activity-panel"><div class="section-head"><div><span class="eyebrow">04 / CONTINUOUS FEEDBACK</span><h2>Guidance activity</h2></div><span class="badge">LATEST EVENTS</span></div><div class="activity-list" id="activityList"><div class="empty-state">System events will appear here.</div></div></article>
+  </section>
+  <section class="notice"><b>IMPORTANT LIMITATION</b><span>AKSHU is an experimental assistance prototype. Object labels and left/right/ahead estimates are approximate; this system does not measure safe distance or reliably detect every hazard. It is not a safety-rated navigation aid and must not replace a white cane, guide dog, or human assistance.</span></section>
+  <footer><span>AKSHU 5.0 · SMART VISION & CONTINUOUS VOICE GUIDANCE</span><span>FLASK CLOUD SERVICE <i class="tiny-dot"></i> <a href="/health" target="_blank" rel="noreferrer">HEALTH CHECK</a></span></footer>
+</main>
+<script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body></html>

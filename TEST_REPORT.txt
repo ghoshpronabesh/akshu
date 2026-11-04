@@ -1,0 +1,17 @@
+AKSHU 5.0 deployment overlay — test report
+
+PASSED
+- Python syntax compilation: app.py and akshu_agent.py (python -m py_compile).
+- Browser JavaScript syntax: static/app.js (node --check).
+- Flask route registration and route logic smoke tests using a lightweight Flask shim: /, /health, /api/status, /api/agent/update, /api/events; authenticated update accepted, invalid token rejected.
+- Agent helper checks: left/ahead/right position classification and scene-description behavior.
+- YOLO adapter smoke test with a mocked YOLO result and real OpenCV/NumPy modules.
+- Dashboard static content checks: ENABLE VOICE, TEST VOICE, DEMO MODE, simulated-data label, browser speechSynthesis calls.
+
+NOT RUN IN THIS ENVIRONMENT
+- Real Flask/Gunicorn server startup: Flask and Gunicorn are not installed here, and package installation was blocked by unavailable network access.
+- Real YOLO inference and camera capture: the ultralytics package and a Windows camera are not available here.
+- Actual browser audio output: this environment does not provide an interactive browser audio device. The implementation uses SpeechSynthesisUtterance and reports speaking only from the browser onstart event; speech errors are handled through onerror.
+- Live end-to-end Render-to-Windows-agent test: requires a deployed Render URL and the matching private AKSHU_AGENT_TOKEN.
+
+Do not treat the unrun items as passed. Follow README.md after deployment to complete these device-specific checks.
